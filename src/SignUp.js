@@ -1,6 +1,11 @@
-import React, {useRef} from "react";
-import {useNavigate} from 'react-router-dom'
+import React, { useRef } from "react";
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { auth } from './firebase'
+import { collection, addDoc } from 'firebase/firestore'
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { db, storage } from './firebase'
 
 const SignUp = (props) => {
   const navigate = useNavigate()
@@ -8,19 +13,55 @@ const SignUp = (props) => {
   const id_ref = useRef(null);
   const nickname_ref = useRef(null);
   const pw_ref = useRef(null);
-  const pw_check = useRef(null);
-  const userthumb_ref = useRef(null);
+  const pw_check_ref = useRef(null);
+  const profileImg_ref = useRef(null);
+
+  const uploadImg = async (e) => {
+    const file_path = 'profileImg/'+ new Date().getTime()
+    const uploaded_file = await uploadBytes(ref(storage, file_path), e.target.files[0])
+    const file_url = await getDownloadURL(uploaded_file.ref)
+    profileImg_ref.current = { url: file_url }
+  }
+
+  const signupBtn = async (event) => {
+    event.preventDefault()
+    const pwConfirmed = pw_ref.current.value === pw_check_ref.current.value
+    const idFormConfirmed = Boolean((id_ref.current.value).split('@')[1].split('.')[1])
+
+    if (pwConfirmed && idFormConfirmed) {
+      try {
+        const user = await createUserWithEmailAndPassword(auth, id_ref.current.value, pw_check_ref.current.value)
+
+        await addDoc(collection(db, 'users'), {
+          user_id: user.user.email,
+          nickname: nickname_ref.current.value,
+          profile_img: profileImg_ref.current? profileImg_ref.current.url : '',
+          alerts: []
+        })
+
+        window.alert(`환영합니다! ${ nickname_ref.current.value}님!\n회원가입이 완료되었습니다.`)
+        navigate('/')
+      } catch {
+        window.alert('중복된 아이디입니다.')
+      }
+    } else if (!idFormConfirmed) {
+      window.alert('아이디를 정확히 입력해주세요')
+    } else if (!pwConfirmed) {
+      window.alert('비밀번호 확인이 일치하지 않습니다.')
+    }
+
+  }
 
   return (
     <div>
       <SignUpBox>
         <h1> 회원가입 </h1>
-        <span>아이디</span><input ref={id_ref} type='email' required='required' placeholder='아이디를 입력해주세요'/>
-        <span>닉네임</span><input ref={nickname_ref} type='text' required='required' placeholder='닉네임을 입력해주세요'/>
-        <span>비밀번호</span><input ref={pw_ref} type='password'  required='required' placeholder='비밀번호를 입력해주세요'/>
-        <span>비밀번호 확인</span><input ref={pw_check} type='password' required='required' placeholder='비밀번호를 다시 입력해주세요'/>
-        <span>프로필 이미지 등록 (필수 x)</span><input ref={userthumb_ref} type='file'/>
-        <button type="submit"> 회원가입 </button>
+        <span>아이디</span><input ref={id_ref} type='email' required='required' placeholder='아이디를 입력해주세요' />
+        <span>닉네임</span><input ref={nickname_ref} type='text' required='required' placeholder='닉네임을 입력해주세요' />
+        <span>비밀번호</span><input ref={pw_ref} type='password' required='required' placeholder='비밀번호를 입력해주세요' />
+        <span>비밀번호 확인</span><input ref={pw_check_ref} type='password' required='required' placeholder='비밀번호를 다시 입력해주세요' />
+        <span>프로필 이미지 등록 (필수 x)</span><input type='file' onChange={uploadImg} />
+        <button onClick={signupBtn} type="submit"> 회원가입 </button>
       </SignUpBox>
     </div>
   )
