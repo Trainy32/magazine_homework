@@ -4,6 +4,7 @@ import styled from 'styled-components'
 
 import {useSelector, useDispatch} from 'react-redux'
 import {readPosts, addLike, unLike} from './redux/modules/Magazine'
+import { newAlerts, removeAlerts } from './redux/modules/Users'
 
 
 const PostList = (props) => {
@@ -15,12 +16,16 @@ const PostList = (props) => {
   const likePost = (post_index) => {
     try {
     const newLike = [post_index, userData.user_id]
+    const alertDate = new Date().getTime()
+    const alertData = [posts[post_index].postedBy, [alertDate, posts[post_index].postImg, userData.user_id, 'Like']]
 
     if (! posts[post_index].likedBy.includes(userData?.user_id)) {
       dispatch(addLike(newLike))
+      dispatch(newAlerts(alertData))
     }
     else {
       dispatch(unLike(newLike))
+      dispatch(removeAlerts(alertData))
     }
     } catch {
       if(!userData) {

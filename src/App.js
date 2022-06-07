@@ -56,8 +56,8 @@ function App() {
 
         {isLogin ?
           (<div style={{display:'flex'}}>
-            <button onClick={() => navigate('/myalert')}>알림</button>
-            <AlertBadge>10</AlertBadge>
+            <button user_data={userData} onClick={() => navigate('/myalert')}>알림</button>
+            <AlertBadge>{userData?.alerts.length}</AlertBadge>
             <button onClick={logOut}>로그아웃</button>
           </div>)
           : (<div><button onClick={() => navigate('/login')}>로그인</button>
@@ -103,6 +103,13 @@ const Header = styled.div`
 `
 const Welcome = styled.div`
   display: flex;
+  align-items: center;
+
+  h2 {
+    font-size:40px;
+    margin-right: 15px;
+    cursor:pointer;
+  }
 
   div {
     margin: 5px 20px 5px 0px;
