@@ -116,6 +116,11 @@ const Header = styled.div`
     background-color: #1c617a;
     color: #fff;
     cursor:pointer;
+
+    :hover {
+      background-color: #16a3d6;  
+      transition: background-color 0.2s ease-in;
+    }
   }
 `
 const Welcome = styled.div`
@@ -171,6 +176,11 @@ const AddNew = styled.button`
   font-weight: 600;
   box-shadow: 0px 2px 5px #0d0d0d38;
   cursor:pointer;
+
+  &:hover {
+      background-color: #16a3d6;  
+      transition: background-color 0.2s ease-in;
+    }
 `
 
 

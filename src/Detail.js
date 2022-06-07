@@ -3,14 +3,39 @@ import styled from 'styled-components'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { addLikeFB, unLikeFB } from './redux/modules/Magazine'
+import { addCommentFB, loadCommentFB, deleteCommentFB } from "./redux/modules/Comments";
 
 
 const Detail = (props) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const userData = props.userData
+  const commentList = useSelector(state => state.Comments.list)
   const params = useParams()
   const currentPost = useSelector((state) => state.magazinePost.list).find((p) => p.id === params.postId)
+
+  React.useEffect( () => {
+    dispatch(loadCommentFB(currentPost.id));
+      }, []);
+  
+  const comment_ref = React.useRef()
+  const addComment = () => {
+    if (userData) {
+      const commentTime = new Date().toLocaleDateString()
+      const newComment = {
+        post_id : currentPost.id,
+        comment : comment_ref.current.value,
+        comment_by: userData.user_id,
+        comment_nick : userData.nickname,
+        comment_time: commentTime,
+      }
+      dispatch(addCommentFB(newComment))
+      window.alert('등록되었습니다')
+    } else {
+      window.alert('먼저 로그인해주세요!')
+    }
+
+  }
 
   const likePost = () => {
     try {
@@ -36,6 +61,18 @@ const Detail = (props) => {
       navigate('/write/'+params.postId)
     } else {
       window.alert('작성자만 수정할 수 있어요')
+    }
+  }
+
+  const deleteComment = (commentData) => {
+    if (userData?.user_id === commentData.comment_by) {
+      if(window.confirm('코멘트를 삭제하시겠어요?')) {
+        dispatch(deleteCommentFB(commentData.id))
+        window.alert('삭제되었습니다')
+        window.location.reload()
+      }
+    } else {
+      window.alert('코멘트 작성자만 삭제할 수 있어요')
     }
   }
 
@@ -72,16 +109,19 @@ const Detail = (props) => {
 
       <CommentWrap>
         <span> {userData ? userData.nickname : '로그인해주세요'} </span>
-        <input />
-        <button>코멘트<br /> 남기기</button>
+        <input ref={comment_ref}/>
+        <button onClick={addComment}>코멘트<br /> 남기기</button>
       </CommentWrap>
 
-
-      <CommentList>
-        <span> 닉네임 </span>
-        <div> 이런 코멘트를 남겨볼까</div>
-        <h5>2022. 06. 07.</h5>
-      </CommentList>
+      {
+        commentList.map((p,i) => { return (
+          <CommentList key={i}>
+          <span> {p.comment_nick} </span>
+          <div> {p.comment}  <DeleteBtn onClick={() => deleteComment(p)}>x</DeleteBtn> </div>
+          <h5>{p.comment_time}</h5>
+        </CommentList>
+        ) })
+      }
     </Wrap>
   )
 }
@@ -266,7 +306,7 @@ const CommentList = styled.div`
   padding: 10px 10px;
   width: 90vw;
   max-width: 600px;
-  margin: 20px auto 20px auto;
+  margin: 10px auto 10px auto;
   border: 1px solid #ccc;
   border-radius: 5px;
   box-sizing:border-box;
@@ -282,7 +322,8 @@ const CommentList = styled.div`
     text-align: center;
     border-right: 1px solid #ddd;
     font-weight: 600;
-    font-size: 100%;
+    font-size: 80%;
+    color: #1c617a
   }
 
   div{
@@ -301,6 +342,13 @@ const CommentList = styled.div`
     margin: 0px;
     padding: 0px;
   }
+`
+const DeleteBtn = styled.h3 `
+  margin: 0px 0px 0px 15px;
+  padding: 0px;
+  font-weight: 300;
+  color: #aaa;
+  cursor:pointer;
 `
 
 

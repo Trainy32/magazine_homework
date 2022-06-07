@@ -90,6 +90,10 @@ const Magazine = createSlice({
       state.list.map((p) =>  p.id === payload.id ? {...p, ...payload} : p )
     },
 
+    [deletePostFB.fulfilled] :  (state, { payload }) => {
+      state.list.filter((p) =>  p.id !== payload)
+    },
+
     [addLikeFB.fulfilled] : (state, { payload }) => {
       state.list.forEach((p) => { 
         if(p.id === payload[0]) {
