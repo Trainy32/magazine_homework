@@ -3,11 +3,12 @@ import styled from 'styled-components'
 import {useNavigate} from 'react-router-dom'
 import {useSelector, useDispatch} from 'react-redux'
 import {loadPostFB, addLikeFB, unLikeFB} from './redux/modules/Magazine'
-
+import { getDatabase, ref, set } from "firebase/database";
 
 const PostList = (props) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const alertdb = getDatabase()
   const posts = useSelector(state => state.magazinePost.list)
   const userData = props.userData
 
@@ -19,11 +20,20 @@ const PostList = (props) => {
   const likePost = (post_index) => {
     try {
     const newLike = [posts[post_index].id, userData.user_id]
-    const alertDate = new Date().toLocaleDateString()
-    const alertData = [posts[post_index].postedBy, [alertDate, posts[post_index].postImg, userData.user_id, 'Like']]
+    const alertDate = new Date()
 
     if (! posts[post_index].likedBy.includes(userData?.user_id)) {
       dispatch(addLikeFB(newLike))
+
+      const alertData = {
+        date: alertDate.toLocaleDateString(), 
+        post_id: posts[post_index].id,
+        committed_by : userData.nickname, 
+        alert_type :'Like'
+      }
+  
+      set(ref(alertdb, 'users/'+userData.id+'/'+alertDate.getTime()), alertData)
+
     }
     else {
       dispatch(unLikeFB(newLike))
@@ -135,8 +145,8 @@ const ProfileImg = styled.div`
     width: 35px;
     height: 35px;
     border-radius: 5px;
-    background: url(${(props) => props.post_data.profileImg}) no-repeat center;
-    background-size: 90%;
+    background: url(${(props) => props.post_data.profileImg !== '' ? props.post_data.profileImg : 'https://firebasestorage.googleapis.com/v0/b/sparta-react-basic-b15c2.appspot.com/o/postImg%2F1654615696359?alt=media&token=d4e28986-f13d-48c5-a320-ca6ea48503d5'}) no-repeat center;
+    background-size: cover;
 `
 
 

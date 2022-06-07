@@ -4,6 +4,7 @@ import { Route, Routes, useNavigate } from 'react-router-dom'
 import { auth, db } from './firebase'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { collection, getDocs, query, where } from 'firebase/firestore'
+import { getDatabase, ref, set } from "firebase/database";
 
 import SignUp from "./SignUp";
 import Login from "./Login";

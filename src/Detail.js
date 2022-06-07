@@ -69,7 +69,6 @@ const Detail = (props) => {
       if(window.confirm('코멘트를 삭제하시겠어요?')) {
         dispatch(deleteCommentFB(commentData.id))
         window.alert('삭제되었습니다')
-        window.location.reload()
       }
     } else {
       window.alert('코멘트 작성자만 삭제할 수 있어요')
@@ -114,7 +113,7 @@ const Detail = (props) => {
       </CommentWrap>
 
       {
-        commentList.map((p,i) => { return (
+        commentList?.map((p,i) => { return (
           <CommentList key={i}>
           <span> {p.comment_nick} </span>
           <div> {p.comment}  <DeleteBtn onClick={() => deleteComment(p)}>x</DeleteBtn> </div>
@@ -204,7 +203,7 @@ const ProfileImg = styled.div`
     width: 35px;
     height: 35px;
     border-radius: 5px;
-    background: url(${(props) => props.post_data.profileImg}) no-repeat center;
+    background: url(${(props) => props.post_data.profileImg !== '' ? props.post_data.profileImg : 'https://firebasestorage.googleapis.com/v0/b/sparta-react-basic-b15c2.appspot.com/o/postImg%2F1654615696359?alt=media&token=d4e28986-f13d-48c5-a320-ca6ea48503d5'}) no-repeat center;
     background-size: 90%;
 `
 
@@ -221,7 +220,7 @@ const ImageArea = styled.div`
   max-height: 500px;
   border: 1px solid #ddd;
   background: url(${(props) => props.post_data.postImg}) no-repeat center;
-  background-size: cover;
+  background-size: contain;
   box-shadow: ${(props) => (props.post_data.layout !== 'Top' ? '0px 2px 5px #0d0d0d38 inset' : 'none')}; 
   margin-left:-1px;
 `
@@ -230,7 +229,6 @@ const TextArea = styled.div`
   margin: 24px;
   width: ${(props) => (props.post_data.layout === 'Top' ? '90%' : '40%')};
   max-width: 800px;
-  max-height: ${(props) => (props.post_data.layout === 'Top' ? '100px' : '45vh')};
   white-space:pre-wrap;
 `
 
