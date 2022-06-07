@@ -47,7 +47,7 @@ function App() {
 
   const writeBtn = () => {
     if (isLogin) { 
-      navigate('/write')
+      navigate('/write/new')
     } else {
       window.alert('먼저 로그인해주세요! :)')
     }
@@ -85,7 +85,7 @@ function App() {
         <Route path='/signup' element={<SignUp />} />
         <Route path='/myalert' element={<MyAlert userData={userData} />} />
         <Route path='/detail/:postId' element={<Detail userData={userData}/>} />
-        <Route path='/write' element={<Write userData={userData}/>} />
+        <Route path='/write/:postId' element={<Write userData={userData}/>} />
       </Routes>
     </div>
   );
@@ -169,6 +169,7 @@ const AddNew = styled.button`
   color: #fff;
   font-size: 1.2em;
   font-weight: 600;
+  box-shadow: 0px 2px 5px #0d0d0d38;
   cursor:pointer;
 `
 

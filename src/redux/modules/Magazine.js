@@ -19,13 +19,30 @@ export const loadPostFB = createAsyncThunk(
   }
 );
 
-
 export const createPostFB = createAsyncThunk(
   'createPost',
   async (postData) => {
     const docRef = await addDoc(collection(db, 'magazinePost'), postData)
     const newPost = {id: docRef.id, ...postData}
     return newPost;
+  }
+);
+
+export const editPostFB = createAsyncThunk(
+  'editPost',
+  async (postData) => {
+    const docRef = doc(db, 'magazinePost', postData.id)
+    await updateDoc(docRef, {...postData})
+    return postData;
+  }
+);
+
+export const deletePostFB = createAsyncThunk(
+  'deletePost',
+  async (postId) => {
+    const docRef = doc(db, 'magazinePost', postId)
+    await deleteDoc(docRef)
+    return postId;
   }
 );
 
@@ -64,22 +81,28 @@ const Magazine = createSlice({
     [loadPostFB.fulfilled] : (state, { payload }) => {
       state.list = payload
     },
+
     [createPostFB.fulfilled] : (state, { payload }) => {
-      console.log(payload)
       state.list = state.list.push(payload)
     },
+
+    [editPostFB.fulfilled] :  (state, { payload }) => {
+      state.list.map((p) =>  p.id === payload.id ? {...p, ...payload} : p )
+    },
+
     [addLikeFB.fulfilled] : (state, { payload }) => {
       state.list.forEach((p) => { 
         if(p.id === payload[0]) {
           p.likedBy.push(payload[1])}
         })
     },
+
     [unLikeFB.fulfilled] : (state, { payload }) => {
       state.list.forEach((p) => { 
         if(p.id === payload[0]) {
           p.likedBy = payload[1]}
         })
-    }
+    },
   }
 })
 

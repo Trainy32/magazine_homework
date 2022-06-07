@@ -4,9 +4,6 @@ import {useNavigate} from 'react-router-dom'
 import {useSelector, useDispatch} from 'react-redux'
 import {loadPostFB, addLikeFB, unLikeFB} from './redux/modules/Magazine'
 
-import { db } from './firebase'
-import {collection, query, where, getDoc, getDocs, addDoc, updateDoc, doc, deleteDoc} from 'firebase/firestore'
-
 
 const PostList = (props) => {
   const navigate = useNavigate()
@@ -43,9 +40,9 @@ const PostList = (props) => {
   // 포스트ID, 썸네일링크, 누른사람닉네임, 인터랙션 종류
 
 
-  const editPostBtn = (writerId) => {
-    if (userData?.user_id === writerId) {
-      navigate('/write')      
+  const editPostBtn = (postdata) => {
+    if (userData?.user_id === postdata.postedBy) {
+      navigate('/write/'+postdata.id)      
     } else {
       window.alert('작성자만 수정할 수 있어요')
     }
@@ -62,7 +59,7 @@ const PostList = (props) => {
         </Writer>
         <div>
           <span> {posts[i].postDate} </span>
-          <EditBtn onClick={() => editPostBtn(posts[i].postedBy)}> 수정</EditBtn>
+          <EditBtn onClick={() => editPostBtn(posts[i])}> 수정</EditBtn>
         </div>
       </PostTitle>
 
@@ -184,6 +181,7 @@ const HeartBtn = styled.span`
 font-size: 1.9em;
 margin-top: -5px;
 margin-right: 0px;
+cursor:pointer;
 `
 
 

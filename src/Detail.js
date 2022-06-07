@@ -1,8 +1,8 @@
 import React from "react";
 import styled from 'styled-components'
-import {useNavigate, useParams} from 'react-router-dom'
-import {useSelector, useDispatch} from 'react-redux'
-import {loadPostFB, addLikeFB, unLikeFB} from './redux/modules/Magazine'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
+import { addLikeFB, unLikeFB } from './redux/modules/Magazine'
 
 
 const Detail = (props) => {
@@ -14,16 +14,16 @@ const Detail = (props) => {
 
   const likePost = () => {
     try {
-    const newLike = [currentPost.id, userData.user_id]
+      const newLike = [currentPost.id, userData.user_id]
 
-    if (! currentPost.likedBy.includes(userData?.user_id)) {
-      dispatch(addLikeFB(newLike))
-    }
-    else {
-      dispatch(unLikeFB(newLike))
-    }
-    } catch(err) {
-      if(!userData) {
+      if (!currentPost.likedBy.includes(userData?.user_id)) {
+        dispatch(addLikeFB(newLike))
+      }
+      else {
+        dispatch(unLikeFB(newLike))
+      }
+    } catch (err) {
+      if (!userData) {
         window.alert('먼저 로그인해주세요 :)')
       } else {
         console.log(err)
@@ -33,7 +33,7 @@ const Detail = (props) => {
 
   const editPostBtn = (writerId) => {
     if (userData?.user_id === writerId) {
-      navigate('/write')      
+      navigate('/write/'+params.postId)
     } else {
       window.alert('작성자만 수정할 수 있어요')
     }
@@ -42,42 +42,46 @@ const Detail = (props) => {
 
   return (
     <Wrap>
-    <Card>
-      <PostTitle>
-        <Writer>
-          <ProfileImg post_data={currentPost}/> <span> {currentPost?.nickname} </span>
-        </Writer>
-        <div>
-          <span> {currentPost?.postDate} </span>
-          <EditBtn onClick={() => editPostBtn(currentPost?.postedBy)}> 수정</EditBtn>
-        </div>
-      </PostTitle>
+      <PageTitle>
+        <h2>상세보기</h2>
+        <ListBtn onClick={() => navigate('/')}>리스트로</ListBtn>
+      </PageTitle>
+      <Card>
+        <PostTitle>
+          <Writer>
+            <ProfileImg post_data={currentPost} /> <span> {currentPost?.nickname} </span>
+          </Writer>
+          <div>
+            <span> {currentPost?.postDate} </span>
+            <EditBtn onClick={() => editPostBtn(currentPost?.postedBy)}> 수정</EditBtn>
+          </div>
+        </PostTitle>
 
-      <PostContent post_data={currentPost}>
-        <TextArea post_data={currentPost}> {currentPost?.postTxt} </TextArea>
-        <ImageArea post_data={currentPost}> </ImageArea>
-      </PostContent>
+        <PostContent post_data={currentPost}>
+          <TextArea post_data={currentPost}> {currentPost?.postTxt} </TextArea>
+          <ImageArea post_data={currentPost}> </ImageArea>
+        </PostContent>
 
-      <PostResponses>
-        <span>likes<span style={{margin:'0px 5px 0px 10px', color:'#cd332b', fontSize:'1.1em'}}>{currentPost?.likedBy.length}</span>개</span>
-        <HeartBtn post_data={currentPost} onClick={() => likePost()}> 
-          { currentPost.likedBy.includes(userData?.user_id) ? '❤️' : '🤍'} 
-        </HeartBtn>
-      </PostResponses>
-    </Card>
+        <PostResponses>
+          <span>likes<span style={{ margin: '0px 5px 0px 10px', color: '#cd332b', fontSize: '1.1em' }}>{currentPost?.likedBy.length}</span>개</span>
+          <HeartBtn post_data={currentPost} onClick={() => likePost()}>
+            {currentPost.likedBy.includes(userData?.user_id) ? '❤️' : '🤍'}
+          </HeartBtn>
+        </PostResponses>
+      </Card>
 
-    <CommentWrap>
-      <span> { userData ? userData.nickname : '로그인해주세요'} </span>
-      <input/>
-      <button>코멘트<br/> 남기기</button>
-    </CommentWrap>
+      <CommentWrap>
+        <span> {userData ? userData.nickname : '로그인해주세요'} </span>
+        <input />
+        <button>코멘트<br /> 남기기</button>
+      </CommentWrap>
 
 
-    <CommentList>
-      <span> 닉네임 </span>
-      <div> 이런 코멘트를 남겨볼까</div>
-      <h5>2022. 06. 07.</h5>
-    </CommentList>
+      <CommentList>
+        <span> 닉네임 </span>
+        <div> 이런 코멘트를 남겨볼까</div>
+        <h5>2022. 06. 07.</h5>
+      </CommentList>
     </Wrap>
   )
 }
@@ -85,11 +89,39 @@ const Detail = (props) => {
 const Wrap = styled.div`
 margin-top: 120px;
 `
+const PageTitle = styled.div`
+width: 90vw;
+max-width: 600px;
+margin: 0px auto 15px auto;
+display:flex;
+align-items: flex-end;
+justify-content: space-between;
+
+
+h2{
+  color: #606060;
+  margin: 0px;
+}
+`
+
+
+const ListBtn = styled.button`
+width: 150px;
+height: 45px;
+margin-left: 20px;
+border: none;
+border-radius: 50px;
+background-color: #ddd;
+color: #6f6f6f;
+font-size: 95%;
+font-weight: 500;
+cursor: pointer;
+`
 
 const Card = styled.div`
   width: 90vw;
   max-width: 600px;
-  margin: 30px auto 20px auto;
+  margin: 0px auto 20px auto;
   border: 1px solid #ccc;
   border-radius: 5px;
   box-shadow: 1px 1px 1px #0d0d0d21;
@@ -115,7 +147,7 @@ cursor:pointer;
   font-weight: 600;
   color:#1c617a;
 }
-` 
+`
 
 const Writer = styled.div`
 display: flex;
@@ -159,7 +191,6 @@ const TextArea = styled.div`
   width: ${(props) => (props.post_data.layout === 'Top' ? '90%' : '40%')};
   max-width: 800px;
   max-height: ${(props) => (props.post_data.layout === 'Top' ? '100px' : '45vh')};
-  overflow:hidden;
   white-space:pre-wrap;
 `
 
@@ -177,6 +208,7 @@ const HeartBtn = styled.span`
 font-size: 1.9em;
 margin-top: -5px;
 margin-right: 0px;
+cursor:pointer;
 `
 
 const CommentWrap = styled.div`
