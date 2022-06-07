@@ -23,7 +23,7 @@ const Wrap = styled.div `
   align-items : flex-end;
   width: 90%;
   max-width: 900px;
-  margin: 30px auto 30px auto;
+  margin: 120px auto 30px auto;
 `
 
 const DeleteAll = styled.button`
@@ -51,8 +51,6 @@ const Alerts = styled.div`
   padding: 10px 20px 10px 10px;
   box-shadow: 1px 1px 1px #0d0d0d38;
   font-size: 18px;
-  position: relative;
-
   span{
     margin: 0;
     font-weight: 600;
@@ -67,7 +65,6 @@ background-color: #ddd;
 
 const DeleteBtn = styled.span`
 font-size: 30px;
-position: absolute;
 right: 10px;
 top: 0px;
 padding: 10px;

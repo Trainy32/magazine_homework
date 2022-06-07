@@ -65,7 +65,7 @@ function App() {
         }
 
       </Header>
-
+        
       <Routes>
         <Route path='/' element={
             <> <PostList userData={userData} /> 
@@ -81,10 +81,16 @@ function App() {
 }
 
 const Header = styled.div`
+  box-sizing: border-box;
+  position:fixed;
+  top:0;
+  
+  background-color:#fff;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0px 30px;
+  padding: 0px 4vw;
   box-shadow: 0px 2px 5px #0d0d0d38;
 
   height: 80px;
@@ -139,7 +145,7 @@ background-color: #ff9c00;
 `
 
 const AddNew = styled.button`
-  position: absolute;
+  position:fixed;
   bottom: 8%;
   right: 5%;
   height: 100px;

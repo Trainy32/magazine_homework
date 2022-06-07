@@ -2,7 +2,7 @@ import React, {useRef, useState} from "react";
 import {useNavigate} from 'react-router-dom'
 import styled from 'styled-components'
 import {useDispatch, useSelector} from 'react-redux'
-import {createPost} from './redux/modules/Magazine'
+import {createPostFB} from './redux/modules/Magazine'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { storage } from './firebase'
 
@@ -36,7 +36,7 @@ const Write = (props) => {
         likedBy: [],
         layout: layout
       }
-      dispatch(createPost(newPost))
+      dispatch(createPostFB(newPost))
       navigate('/')
     } else if (text_ref.current.value === '') {
       window.alert('텍스트를 입력해주세요!')
@@ -73,7 +73,7 @@ const Wrap = styled.div`
   align-items: center;
   width: 80%;
   max-width: 900px;
-  margin: 30px auto 50px auto;
+  margin: 120px auto 50px auto;
   border: 1px solid #ccc;
   border-radius: 5px;
   padding: 20px;

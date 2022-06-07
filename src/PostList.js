@@ -3,45 +3,50 @@ import {useNavigate} from 'react-router-dom'
 import styled from 'styled-components'
 
 import {useSelector, useDispatch} from 'react-redux'
-import {readPosts, addLike, unLike} from './redux/modules/Magazine'
+import {loadPostFB, addLikeFB, unLikeFB} from './redux/modules/Magazine'
 import { newAlerts, removeAlerts } from './redux/modules/Users'
 
 
 const PostList = (props) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const posts = useSelector(state =>state.magazinePosts)
+  const posts = useSelector(state => state.magazinePost.list)
   const userData = props.userData
+
+  React.useEffect( () => {
+    dispatch(loadPostFB());
+      }, []);
+      
 
   const likePost = (post_index) => {
     try {
-    const newLike = [post_index, userData.user_id]
-    const alertDate = new Date().getTime()
+    const newLike = [posts[post_index].id, userData.user_id]
+    const alertDate = new Date().getDate()
     const alertData = [posts[post_index].postedBy, [alertDate, posts[post_index].postImg, userData.user_id, 'Like']]
 
     if (! posts[post_index].likedBy.includes(userData?.user_id)) {
-      dispatch(addLike(newLike))
+      dispatch(addLikeFB(newLike))
       dispatch(newAlerts(alertData))
     }
     else {
-      dispatch(unLike(newLike))
+      dispatch(unLikeFB(newLike))
       dispatch(removeAlerts(alertData))
     }
-    } catch {
+    } catch(err) {
       if(!userData) {
         window.alert('먼저 로그인해주세요 :)')
+      } else {
+        console.log(err)
       }
     }
   }
 
 
-  React.useEffect( () => {
-    dispatch(readPosts());
-      }, []);
+
 
   return (
-    <div>
-      { posts.map((p,i) => {return(
+    <Wrap>
+      { posts.length ? posts.map((p,i) => {return(
     <Card key={i}>
       <PostTitle>
         <Writer>
@@ -66,10 +71,14 @@ const PostList = (props) => {
       </PostResponses>
     </Card>
     )}
-    )}
-    </div>
+    ): <div/>}
+    </Wrap>
   )
 }
+
+const Wrap = styled.div`
+margin-top: 120px;
+`
 
 const Card = styled.div`
   width: 90vw;

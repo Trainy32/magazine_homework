@@ -1,36 +1,85 @@
-import {createSlice} from '@reduxjs/toolkit'
+import {createSlice, createAsyncThunk} from '@reduxjs/toolkit'
+
+import { db } from '../../firebase'
 import {collection, getDoc, getDocs, addDoc, updateDoc, doc, deleteDoc} from 'firebase/firestore'
 
-const Magazine = createSlice({
-  name: 'magazinePosts',
-  initialState: [{
-    postedBy: 'test@test.com',
-    profileImg: 'https://firebasestorage.googleapis.com/v0/b/sparta-react-basic-b15c2.appspot.com/o/profileImg%2F1654512372409?alt=media&token=f9ea42a0-f601-4329-946a-1d326b0b3aac',
-    postImg: 'https://firebasestorage.googleapis.com/v0/b/sparta-react-basic-b15c2.appspot.com/o/images%2F20220528_185915.png?alt=media&token=bf2323b0-00bd-4231-abf6-273850dcc760',
-    postTxt: '여기에 포스트의 텍스트 내용이 들어갑니다',
-    postDate: '2022-06-06',
-    likedBy: [],
-    layout: 'Top'
-  }],
-  reducers : {    
-    readPosts: (state, action) =>{
-    console.log('로딩테스트')
-  },
-  createPost: (state, action) =>{
-    console.log(action.payload)
-    state = state.push(action.payload)
-  },
-  addLike: (state, action) =>{
-    state.map((p,i) => i === action.payload[0] ? p.likedBy.push(action.payload[1]) : p)
-  },
-  unLike: (state, action) =>{
-    state.forEach((p,i) => {
-      if(i === action.payload[0]){
-        p.likedBy = p.likedBy.filter((l) => l !== action.payload[1])
-      } })
-  }},
-  extraReducers: {
 
+export const loadPostFB = createAsyncThunk(
+  'loadPost',
+  async () => {
+    const postListsFB = await getDocs(collection(db, 'magazinePost'))
+
+    let myPostList = []
+
+    postListsFB.forEach((doc) => {
+      myPostList.push({id: doc.id, ...doc.data()})
+    })
+
+    return myPostList;
+  }
+);
+
+
+export const createPostFB = createAsyncThunk(
+  'createPost',
+  async (postData) => {
+    const docRef = await addDoc(collection(db, 'magazinePost'), postData)
+    const newPost = {id: docRef.id, ...postData}
+    return newPost;
+  }
+);
+
+export const addLikeFB = createAsyncThunk(
+  'addLike',
+  async (likeData) => {
+    const docRef = doc(db, 'magazinePost', likeData[0])
+    const likeList = (await getDoc(docRef)).data().likedBy
+    const newLike = likeData[1]
+
+    await updateDoc(docRef, {likedBy:[...likeList,newLike]})
+
+    return likeData
+  }
+);
+
+export const unLikeFB = createAsyncThunk(
+  'unLike',
+  async (likeData) => {
+    const docRef = doc(db, 'magazinePost', likeData[0])
+    const likeList = (await getDoc(docRef)).data().likedBy
+    const userId = likeData[1]
+    const new_list = likeList.filter((u) => u !== userId)
+
+    await updateDoc(docRef, {likedBy:[...new_list]})
+
+    return [likeData[0], new_list]
+  }
+);
+
+const Magazine = createSlice({
+  name: 'magazinePost',
+  initialState: {list:[]},
+  reducers : {},
+  extraReducers: {
+    [loadPostFB.fulfilled] : (state, { payload }) => {
+      state.list = payload
+    },
+    [createPostFB.fulfilled] : (state, { payload }) => {
+      console.log(payload)
+      state.list = state.list.push(payload)
+    },
+    [addLikeFB.fulfilled] : (state, { payload }) => {
+      state.list.forEach((p) => { 
+        if(p.id === payload[0]) {
+          p.likedBy.push(payload[1])}
+        })
+    },
+    [unLikeFB.fulfilled] : (state, { payload }) => {
+      state.list.forEach((p) => { 
+        if(p.id === payload[0]) {
+          p.likedBy = payload[1]}
+        })
+    }
   }
 })
 
