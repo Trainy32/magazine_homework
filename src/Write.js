@@ -29,6 +29,7 @@ const Write = (props) => {
       const writtenDate = new Date()
       const newPost = {
         postedBy: props.userData.user_id,
+        nickname: props.userData.nickname,
         profileImg: props.userData.profile_img,
         postImg: imageUrl,
         postTxt: text_ref.current.value.trim(),

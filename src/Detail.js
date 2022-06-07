@@ -1,31 +1,22 @@
 import React from "react";
 import styled from 'styled-components'
-import {useNavigate} from 'react-router-dom'
+import {useNavigate, useParams} from 'react-router-dom'
 import {useSelector, useDispatch} from 'react-redux'
 import {loadPostFB, addLikeFB, unLikeFB} from './redux/modules/Magazine'
 
-import { db } from './firebase'
-import {collection, query, where, getDoc, getDocs, addDoc, updateDoc, doc, deleteDoc} from 'firebase/firestore'
 
-
-const PostList = (props) => {
+const Detail = (props) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const posts = useSelector(state => state.magazinePost.list)
   const userData = props.userData
+  const params = useParams()
+  const currentPost = useSelector((state) => state.magazinePost.list).find((p) => p.id === params.postId)
 
-  React.useEffect( () => {
-    dispatch(loadPostFB());
-      }, []);
-      
-
-  const likePost = (post_index) => {
+  const likePost = () => {
     try {
-    const newLike = [posts[post_index].id, userData.user_id]
-    const alertDate = new Date().toLocaleDateString()
-    const alertData = [posts[post_index].postedBy, [alertDate, posts[post_index].postImg, userData.user_id, 'Like']]
+    const newLike = [currentPost.id, userData.user_id]
 
-    if (! posts[post_index].likedBy.includes(userData?.user_id)) {
+    if (! currentPost.likedBy.includes(userData?.user_id)) {
       dispatch(addLikeFB(newLike))
     }
     else {
@@ -40,9 +31,6 @@ const PostList = (props) => {
     }
   }
 
-  // 포스트ID, 썸네일링크, 누른사람닉네임, 인터랙션 종류
-
-
   const editPostBtn = (writerId) => {
     if (userData?.user_id === writerId) {
       navigate('/write')      
@@ -54,32 +42,42 @@ const PostList = (props) => {
 
   return (
     <Wrap>
-      { posts.length ? posts.map((p,i) => {return(
-    <Card key={i} >
+    <Card>
       <PostTitle>
         <Writer>
-          <ProfileImg post_data={posts[i]}/> <span> {posts[i].nickname} </span>
+          <ProfileImg post_data={currentPost}/> <span> {currentPost?.nickname} </span>
         </Writer>
         <div>
-          <span> {posts[i].postDate} </span>
-          <EditBtn onClick={() => editPostBtn(posts[i].postedBy)}> 수정</EditBtn>
+          <span> {currentPost?.postDate} </span>
+          <EditBtn onClick={() => editPostBtn(currentPost?.postedBy)}> 수정</EditBtn>
         </div>
       </PostTitle>
 
-      <PostContent post_data={posts[i]} onClick={() => navigate('/detail/'+posts[i].id) }>
-        <TextArea post_data={posts[i]}> {posts[i].postTxt} </TextArea>
-        <ImageArea post_data={posts[i]}> </ImageArea>
+      <PostContent post_data={currentPost}>
+        <TextArea post_data={currentPost}> {currentPost?.postTxt} </TextArea>
+        <ImageArea post_data={currentPost}> </ImageArea>
       </PostContent>
 
       <PostResponses>
-        <span>likes<span style={{margin:'0px 5px 0px 10px', color:'#cd332b', fontSize:'1.1em'}}>{posts[i].likedBy.length}</span>개</span>
-        <HeartBtn post_data={posts[i]} onClick={() => likePost(i)}> 
-          { posts[i].likedBy.includes(userData?.user_id) ? '❤️' : '🤍'} 
+        <span>likes<span style={{margin:'0px 5px 0px 10px', color:'#cd332b', fontSize:'1.1em'}}>{currentPost?.likedBy.length}</span>개</span>
+        <HeartBtn post_data={currentPost} onClick={() => likePost()}> 
+          { currentPost.likedBy.includes(userData?.user_id) ? '❤️' : '🤍'} 
         </HeartBtn>
       </PostResponses>
     </Card>
-    )}
-    ): <div/>}
+
+    <CommentWrap>
+      <span> { userData ? userData.nickname : '로그인해주세요'} </span>
+      <input/>
+      <button>코멘트<br/> 남기기</button>
+    </CommentWrap>
+
+
+    <CommentList>
+      <span> 닉네임 </span>
+      <div> 이런 코멘트를 남겨볼까</div>
+      <h5>2022. 06. 07.</h5>
+    </CommentList>
     </Wrap>
   )
 }
@@ -91,14 +89,10 @@ margin-top: 120px;
 const Card = styled.div`
   width: 90vw;
   max-width: 600px;
-  margin: 30px auto 50px auto;
+  margin: 30px auto 20px auto;
   border: 1px solid #ccc;
   border-radius: 5px;
   box-shadow: 1px 1px 1px #0d0d0d21;
-
-  &:hover {
-    box-shadow: 3px 3px 5px #0d0d0d38;
-  }
 `
 
 const PostTitle = styled.div`
@@ -147,7 +141,6 @@ const PostContent = styled.div`
   display:flex;
   flex-direction: ${(props) => (props.post_data.layout === 'Top' ? 'column' : props.post_data.layout === 'Left' ? 'row' : 'row-reverse')};
   flex-wrap: nowrap;
-  cursor:pointer;
 `
 
 const ImageArea = styled.div`
@@ -186,6 +179,97 @@ margin-top: -5px;
 margin-right: 0px;
 `
 
+const CommentWrap = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  width: 90vw;
+  max-width: 600px;
+  height: 80px;
+  margin: 20px auto 20px auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 1px 1px 1px #0d0d0d21;
+  box-sizing:border-box;
+
+  span{
+    width: 20%;
+    height: 85%;
+    box-sizing:border-box;
+    margin: auto;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align: center;
+
+    font-weight: 600;
+    font-size: 100%;
+  }
+
+  input{
+    width: 60%;
+    height: 85%;
+    box-sizing:border-box;
+    margin-left: 20px;
+  }
+
+  button{
+    width: 20%;
+    height: 85%;
+    box-sizing:border-box;
+    margin-left: 10px;
+    font-weight: 600;
+    background-color: #1c617a;
+    color: #fff;
+    cursor:pointer;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+  }
+`
+
+const CommentList = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 10px 10px;
+  width: 90vw;
+  max-width: 600px;
+  margin: 20px auto 20px auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing:border-box;
+
+  span{
+    width: 20%;
+    height: 100%;
+    box-sizing:border-box;
+    margin: 0px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align: center;
+    border-right: 1px solid #ddd;
+    font-weight: 600;
+    font-size: 100%;
+  }
+
+  div{
+    width: 65%;
+    height: 100%;
+    display:flex;
+    align-items:center;
+    margin-left: 10px;
+
+  }
+
+  h5 {
+    font-weight: 400;
+    color: #aaa;
+    text-align: right;
+    margin: 0px;
+    padding: 0px;
+  }
+`
 
 
-export default PostList
+export default Detail

@@ -10,12 +10,17 @@ import Login from "./Login";
 import MyAlert from "./MyAlert";
 import PostList from "./PostList";
 import Write from "./Write";
+import Detail from "./Detail";
 
 
 function App() {
   const navigate = useNavigate()
   const [isLogin, setIsLogin] = useState(false);
   const [userData, SetUserData] = useState(null)
+  
+  React.useEffect(() => { 
+    onAuthStateChanged(auth, loginChecker)
+  }, [])
 
   const loginChecker = async (user) => {
     if (user) {
@@ -37,17 +42,22 @@ function App() {
   const logOut = () => {
     signOut(auth)
     navigate('/')
+    window.location.reload()
   }
 
-  React.useEffect(() => {
-    onAuthStateChanged(auth, loginChecker)
-  }, [])
+  const writeBtn = () => {
+    if (isLogin) { 
+      navigate('/write')
+    } else {
+      window.alert('먼저 로그인해주세요! :)')
+    }
+  }
 
   return (
     <div className="App">
       <Header>
         <Welcome>
-          <div user_data={userData} onClick={() => navigate('/')}></div>
+          <div user_data={userData} onClick={() => navigate('/')}> </div>
           {isLogin ?
             (<h3><span>{userData ? userData.nickname : ''}</span> 님</h3>)
             : (<h3>로그인해주세요 :)</h3>)
@@ -57,7 +67,7 @@ function App() {
         {isLogin ?
           (<div style={{display:'flex'}}>
             <button user_data={userData} onClick={() => navigate('/myalert')}>알림</button>
-            <AlertBadge>{userData?.alerts.length}</AlertBadge>
+            <AlertBadge>{userData?.alerts?.length}</AlertBadge>
             <button onClick={logOut}>로그아웃</button>
           </div>)
           : (<div><button onClick={() => navigate('/login')}>로그인</button>
@@ -69,11 +79,12 @@ function App() {
       <Routes>
         <Route path='/' element={
             <> <PostList userData={userData} /> 
-            <AddNew onClick={() => navigate('/write')}> 작성 </AddNew></>
+            <AddNew onClick={writeBtn}> 작성 </AddNew></>
           } />
         <Route path='/login' element={<Login />} />
         <Route path='/signup' element={<SignUp />} />
         <Route path='/myalert' element={<MyAlert userData={userData} />} />
+        <Route path='/detail/:postId' element={<Detail userData={userData}/>} />
         <Route path='/write' element={<Write userData={userData}/>} />
       </Routes>
     </div>
@@ -122,8 +133,8 @@ const Welcome = styled.div`
     height: 60px;
     width: 60px;
     border-radius: 60px;
-    background-color: #ddd;
-    
+    background: #ddd;
+    position:relative;
     cursor:pointer;
   }
 
@@ -131,6 +142,7 @@ const Welcome = styled.div`
     color:#1c617a;
   }
 `
+
 const AlertBadge = styled.div `
 display: flex;
 justify-content: center;

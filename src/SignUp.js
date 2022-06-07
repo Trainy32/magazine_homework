@@ -1,8 +1,9 @@
 import React, { useRef } from "react";
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
+
 import { auth } from './firebase'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { collection, addDoc } from 'firebase/firestore'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { db, storage } from './firebase'
