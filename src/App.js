@@ -5,6 +5,9 @@ import { auth, db } from './firebase'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { collection, getDocs, query, where } from 'firebase/firestore'
 
+import {useDispatch, useSelector} from 'react-redux'
+import {loadPostFB} from './redux/modules/Magazine'
+
 import SignUp from "./SignUp";
 import Login from "./Login";
 import MyAlert from "./MyAlert";
@@ -15,11 +18,14 @@ import Detail from "./Detail";
 
 function App() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [isLogin, setIsLogin] = useState(false);
-  const [userData, SetUserData] = useState(null)
-  
+  const [userData, SetUserData] = useState(null);
+  const posts = useSelector(state => state.magazinePost.list)
+
   React.useEffect(() => { 
     onAuthStateChanged(auth, loginChecker)
+    dispatch(loadPostFB());
   }, [])
 
   const loginChecker = async (user) => {
@@ -78,7 +84,7 @@ function App() {
         
       <Routes>
         <Route path='/' element={
-            <> <PostList userData={userData} /> 
+            <> <PostList posts={posts} userData={userData} /> 
             <AddNew onClick={writeBtn}> 작성 </AddNew></>
           } />
         <Route path='/login' element={<Login />} />

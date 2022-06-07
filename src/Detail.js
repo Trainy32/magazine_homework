@@ -102,7 +102,7 @@ const Detail = (props) => {
         <PostResponses>
           <span>likes<span style={{ margin: '0px 5px 0px 10px', color: '#cd332b', fontSize: '1.1em' }}>{currentPost?.likedBy.length}</span>개</span>
           <HeartBtn post_data={currentPost} onClick={() => likePost()}>
-            {currentPost.likedBy.includes(userData?.user_id) ? '❤️' : '🤍'}
+            {currentPost?.likedBy.includes(userData?.user_id) ? '❤️' : '🤍'}
           </HeartBtn>
         </PostResponses>
       </Card>

@@ -10,6 +10,7 @@ const PostList = (props) => {
   const dispatch = useDispatch()
   const posts = useSelector(state => state.magazinePost.list)
   const userData = props.userData
+  // const posts = props.posts
 
   React.useEffect( () => {
     dispatch(loadPostFB());
@@ -36,9 +37,6 @@ const PostList = (props) => {
       }
     }
   }
-
-  // 포스트ID, 썸네일링크, 누른사람닉네임, 인터랙션 종류
-
 
   const editPostBtn = (postdata) => {
     if (userData?.user_id === postdata.postedBy) {
