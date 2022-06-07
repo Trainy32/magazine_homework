@@ -37,7 +37,7 @@ display:flex;
 flex-direction:column;
 width: 60%;
 max-width: 500px;
-margin: 40px auto;
+margin: 120px auto;
 padding: 60px;
 border: 1px solid #aaa;
 

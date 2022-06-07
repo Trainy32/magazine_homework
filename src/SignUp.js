@@ -34,6 +34,7 @@ const SignUp = (props) => {
         const user = await createUserWithEmailAndPassword(auth, id_ref.current.value, pw_check_ref.current.value)
 
         await addDoc(collection(db, 'users'), {
+          uid: user.user.uid,
           user_id: user.user.email,
           nickname: nickname_ref.current.value,
           profile_img: profileImg_ref.current? profileImg_ref.current.url : '',
@@ -74,7 +75,7 @@ display:flex;
 flex-direction:column;
 width: 60%;
 max-width: 500px;
-margin: 40px auto;
+margin: 120px auto;
 padding: 60px;
 border: 1px solid #aaa;
 

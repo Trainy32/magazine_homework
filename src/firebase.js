@@ -11,13 +11,13 @@ import { getDatabase } from "firebase/database";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyBNKxTNWs7DtGmBVTIkOQE5U2vVPdBymSs",
-  authDomain: "sparta-react-basic-b15c2.firebaseapp.com",
-  projectId: "sparta-react-basic-b15c2",
-  storageBucket: "sparta-react-basic-b15c2.appspot.com",
-  messagingSenderId: "381993601261",
-  appId: "1:381993601261:web:8e221336691d0a386424e4",
-  measurementId: "G-4S5HZR6XXG"
+  apiKey: "AIzaSyAVXGXlVOxuDqzb677EIIMwnXfp7zDsW4U",
+  authDomain: "mymagazinepjt.firebaseapp.com",
+  databaseURL: "https://mymagazinepjt-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "mymagazinepjt",
+  storageBucket: "mymagazinepjt.appspot.com",
+  messagingSenderId: "510391132870",
+  appId: "1:510391132870:web:364e91dcd41b840ce5adc7"
 };
 
 // Initialize Firebase

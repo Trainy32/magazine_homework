@@ -39,6 +39,7 @@ const Write = (props) => {
       const writtenDate = new Date()
       const newPost = {
         postedBy: props.userData.user_id,
+        posted_uid: props.userData.uid,
         nickname: props.userData.nickname,
         profileImg: props.userData.profile_img,
         postImg: imageUrl,
@@ -203,7 +204,7 @@ const ImgArea = styled.label`
   cursor:pointer;
 
   background-color: #ddd;
-  background: url(${(props) => props.imageUrl !== '' ? props.imageUrl : 'https://firebasestorage.googleapis.com/v0/b/sparta-react-basic-b15c2.appspot.com/o/postImg%2Fdlal.jpg?alt=media&token=7d248256-73b9-421c-95d5-ce6854b7c566'}) no-repeat center;
+  background: url(${(props) => props.imageUrl !== '' ? props.imageUrl : 'https://firebasestorage.googleapis.com/v0/b/sparta-react-basic-b15c2.appspot.com/o/profileImg%2Fdlal.jpg?alt=media&token=422b4620-8215-4864-9607-184e52bc3ec6'}) no-repeat center;
   background-size: cover;
 `
 const TextArea = styled.textarea`

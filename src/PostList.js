@@ -20,19 +20,18 @@ const PostList = (props) => {
   const likePost = (post_index) => {
     try {
     const newLike = [posts[post_index].id, userData.user_id]
-    const alertDate = new Date()
+    const alertDate = new Date().getTime()
 
     if (! posts[post_index].likedBy.includes(userData?.user_id)) {
       dispatch(addLikeFB(newLike))
 
       const alertData = {
-        date: alertDate.toLocaleDateString(), 
+        date: alertDate, 
         post_id: posts[post_index].id,
-        committed_by : userData.nickname, 
-        alert_type :'Like'
+        committed_by : userData.nickname,
       }
   
-      set(ref(alertdb, 'users/'+userData.id+'/'+alertDate.getTime()), alertData)
+      set(ref(alertdb, 'users/'+posts[post_index].posted_uid+'/like/'+userData.uid), alertData)
 
     }
     else {

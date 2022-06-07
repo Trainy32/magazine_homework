@@ -4,11 +4,13 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { addLikeFB, unLikeFB } from './redux/modules/Magazine'
 import { addCommentFB, loadCommentFB, deleteCommentFB } from "./redux/modules/Comments";
+import { getDatabase, ref, set } from "firebase/database";
 
 
 const Detail = (props) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const alertdb = getDatabase()
   const userData = props.userData
   const commentList = useSelector(state => state.Comments.list)
   const params = useParams()
@@ -40,9 +42,19 @@ const Detail = (props) => {
   const likePost = () => {
     try {
       const newLike = [currentPost.id, userData.user_id]
+      const alertDate = new Date().getTime()
 
       if (!currentPost.likedBy.includes(userData?.user_id)) {
         dispatch(addLikeFB(newLike))
+
+        const alertData = {
+          date: alertDate,
+          post_id: currentPost.id,
+          committed_by : userData.nickname,
+        }
+    
+        set(ref(alertdb, 'users/'+currentPost.posted_uid+'/like/'+userData.uid), alertData)
+  
       }
       else {
         dispatch(unLikeFB(newLike))

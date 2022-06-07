@@ -4,7 +4,7 @@ import { Route, Routes, useNavigate } from 'react-router-dom'
 import { auth, db } from './firebase'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { collection, getDocs, query, where } from 'firebase/firestore'
-import { getDatabase, ref, set } from "firebase/database";
+import { getDatabase, onValue, ref, set } from "firebase/database";
 
 import SignUp from "./SignUp";
 import Login from "./Login";
@@ -16,12 +16,19 @@ import Detail from "./Detail";
 
 function App() {
   const navigate = useNavigate()
+  const alertdb = getDatabase();
   const [isLogin, setIsLogin] = useState(false);
   const [userData, SetUserData] = useState(null)
   
   React.useEffect(() => { 
     onAuthStateChanged(auth, loginChecker)
   }, [])
+
+  const alerts_ref = ref(alertdb, 'users/'+ userData?.uid);
+  onValue(alerts_ref, (snapshot) => {
+    const data = snapshot.val()
+  }) 
+
 
   const loginChecker = async (user) => {
     if (user) {
