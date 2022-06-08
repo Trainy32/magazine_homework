@@ -17,7 +17,6 @@ const MyAlert = (props) => {
   const alertData = props.alertData
   const alertdb = getDatabase()
 
-
   const deleteAlert = (i) => {
     const alertKey = Object.keys(alertData)[i]
     const alert_ref = rtRef(alertdb, 'users/'+userData.uid+'/alerts/'+alertKey)

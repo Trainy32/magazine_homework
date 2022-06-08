@@ -152,6 +152,7 @@ const PostContent = styled.div`
   display:flex;
   flex-direction: ${(props) => (props.post_data.layout === 'Top' ? 'column' : props.post_data.layout === 'Left' ? 'row' : 'row-reverse')};
   flex-wrap: nowrap;
+  position: relative;
   cursor:pointer;
 `
 

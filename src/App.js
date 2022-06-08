@@ -114,6 +114,7 @@ function App() {
 const Header = styled.div`
   box-sizing: border-box;
   position:fixed;
+  z-index: 10;
   top:0;
   
   background-color:#fff;

@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { loadOnePostFB, addLikeFB, unLikeFB } from './redux/modules/Magazine'
 import { addCommentFB, loadCommentFB, deleteCommentFB } from "./redux/modules/Comments";
 import { getDatabase, ref as rtRef, set, push } from "firebase/database";
+import HeartAni from './HeartAni'
 
 
 const Detail = (props) => {
@@ -58,7 +59,7 @@ const Detail = (props) => {
   const likePost = () => {
     try {
       const newLike = [currentPost.id, userData.user_id]
-      const alertDate = new Date().toLocaleDateString()
+      const alertDate = new Date()
 
       if (!currentPost.likedBy.includes(userData?.user_id)) {
         dispatch(addLikeFB(newLike))
@@ -135,6 +136,7 @@ const Detail = (props) => {
             {currentPost.likedBy ? currentPost.likedBy.length : 0}</span>개</span>
           <HeartBtn post_data={currentPost} onClick={() => likePost()}>
             {currentPost.likedBy.includes(userData?.user_id) ? '❤️' : '🤍'}
+            {/* <HeartAni/> */}
           </HeartBtn>
         </PostResponses>
       </Card>
@@ -203,6 +205,7 @@ const Card = styled.div`
   border: 1px solid #ccc;
   border-radius: 5px;
   box-shadow: 1px 1px 1px #0d0d0d21;
+  position: relative;
 `
 
 const PostTitle = styled.div`
