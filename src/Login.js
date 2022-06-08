@@ -26,8 +26,8 @@ const Login = (props) => {
       <h3>test@test.com</h3>
       <span>아이디</span><input ref={id_ref} type='email' placeholder='아이디를 입력해주세요'/>
       <span>비밀번호</span><input ref={pw_ref} type='password' placeholder='비밀번호를 입력해주세요'/>
-      <button onClick={userLogin}> 로그인 </button>
-      <button onClick={()=>{navigate('/signup')}}> 회원가입 </button>
+      <LoginBtn onClick={userLogin}> 로그인 </LoginBtn>
+      <SignupBtn onClick={()=>{navigate('/signup')}}> 회원가입 </SignupBtn>
     </LoginBox>
   )
 }
@@ -62,9 +62,26 @@ button {
   border-radius: 5px;
   font-size:1.1em;
   font-weight: 600;
+}
+`
+const LoginBtn = styled.button`
   background-color: #1c617a;
   color: #fff;
-}
+  cursor:pointer;
+  :hover {
+    background-color: #16a3d6;  
+    transition: background-color 0.2s ease-in;
+  }
+`
+const SignupBtn = styled.button`
+color: #6f6f6f;
+cursor: pointer;
+
+&:hover {
+      background-color: #a9a9a9;
+      color: #fff;
+      transition: all 0.3s linear;
+    }
 `
 
 

@@ -174,7 +174,7 @@ const Wrap = styled.div`
     &:hover {
       background-color: #a9a9a9;
       color: #fff;
-      transition: background-color 0.3s linear;
+      transition: all 0.3s linear;
     }
   }
 

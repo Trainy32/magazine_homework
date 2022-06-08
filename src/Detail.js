@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { addLikeFB, unLikeFB } from './redux/modules/Magazine'
 import { addCommentFB, loadCommentFB, deleteCommentFB } from "./redux/modules/Comments";
-import { getDatabase, ref, set } from "firebase/database";
+import { getDatabase, ref as rtRef, set, push } from "firebase/database";
 
 
 const Detail = (props) => {
@@ -23,15 +23,29 @@ const Detail = (props) => {
   const comment_ref = React.useRef()
   const addComment = () => {
     if (userData) {
-      const commentTime = new Date().toLocaleDateString()
+      const commentDate = new Date()
       const newComment = {
         post_id : currentPost.id,
         comment : comment_ref.current.value,
         comment_by: userData.user_id,
         comment_nick : userData.nickname,
-        comment_time: commentTime,
-      }
+        comment_time: commentDate.toLocaleDateString()+' '+ commentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      } 
       dispatch(addCommentFB(newComment))
+
+      const alertData = {
+        date: commentDate.toLocaleDateString()+' '+ commentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        post_id: currentPost.id,
+        committed_by : userData.nickname,
+        alert_type: 'comment'
+      }
+  
+      const alertListRef = rtRef(alertdb, 'users/'+userData.uid+'/alerts')
+      const newAlertRef = push(alertListRef)
+
+      set(newAlertRef, alertData)
+
+
       window.alert('등록되었습니다')
     } else {
       window.alert('먼저 로그인해주세요!')
@@ -42,18 +56,22 @@ const Detail = (props) => {
   const likePost = () => {
     try {
       const newLike = [currentPost.id, userData.user_id]
-      const alertDate = new Date().getTime()
+      const alertDate = new Date().toLocaleDateString()
 
       if (!currentPost.likedBy.includes(userData?.user_id)) {
         dispatch(addLikeFB(newLike))
 
         const alertData = {
-          date: alertDate,
+          date: alertDate.toLocaleDateString()+' '+ alertDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           post_id: currentPost.id,
           committed_by : userData.nickname,
+          alert_type: 'like'
         }
     
-        set(ref(alertdb, 'users/'+currentPost.posted_uid+'/like/'+userData.uid), alertData)
+        const alertListRef = rtRef(alertdb, 'users/'+userData.uid+'/alerts')
+        const newAlertRef = push(alertListRef)
+  
+        set(newAlertRef, alertData)
   
       }
       else {
@@ -120,7 +138,7 @@ const Detail = (props) => {
 
       <CommentWrap>
         <span> {userData ? userData.nickname : '로그인해주세요'} </span>
-        <input ref={comment_ref}/>
+        <textarea ref={comment_ref}/>
         <button onClick={addComment}>코멘트<br /> 남기기</button>
       </CommentWrap>
 
@@ -162,11 +180,17 @@ height: 45px;
 margin-left: 20px;
 border: none;
 border-radius: 50px;
-background-color: #ddd;
-color: #6f6f6f;
 font-size: 95%;
 font-weight: 500;
+background-color: #ddd;
+color: #6f6f6f;
 cursor: pointer;
+
+&:hover {
+      background-color: #a9a9a9;
+      color: #fff;
+      transition: all 0.3s linear;
+    }
 `
 
 const Card = styled.div`
@@ -288,11 +312,13 @@ const CommentWrap = styled.div`
     font-size: 100%;
   }
 
-  input{
+  textarea{
     width: 60%;
     height: 85%;
     box-sizing:border-box;
     margin-left: 20px;
+    white-space: pre-wrap;
+    padding: 10px;
   }
 
   button{
@@ -307,6 +333,11 @@ const CommentWrap = styled.div`
     border: none;
     border-radius: 5px;
     text-align: center;
+
+    :hover {
+      background-color: #16a3d6;  
+      transition: background-color 0.2s ease-in;
+    }
   }
 `
 

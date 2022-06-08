@@ -22,7 +22,6 @@ export const loadCommentFB = createAsyncThunk(
     commentsFB.forEach((c) =>allComments.push({id:c.id, ...c.data()}))
     const commentList = allComments.filter((c) => c.post_id === postId)
 
-    console.log(commentList)
     return commentList
   }
 );
@@ -54,5 +53,5 @@ const Comments = createSlice({
   }
 })
 
-export const {} = Comments.actions
+
 export default Comments.reducer

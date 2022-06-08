@@ -8,6 +8,7 @@ import { collection, addDoc } from 'firebase/firestore'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { db, storage } from './firebase'
 
+
 const SignUp = (props) => {
   const navigate = useNavigate()
 
@@ -102,6 +103,11 @@ button {
   font-weight: 600;
   background-color: #1c617a;
   color: #fff;
+  cursor:pointer;
+  :hover {
+    background-color: #16a3d6;  
+    transition: background-color 0.2s ease-in;
+  }
 }
 `
 

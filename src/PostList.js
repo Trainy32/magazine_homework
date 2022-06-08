@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import {useNavigate} from 'react-router-dom'
 import {useSelector, useDispatch} from 'react-redux'
 import {loadPostFB, addLikeFB, unLikeFB} from './redux/modules/Magazine'
-import { getDatabase, ref, set } from "firebase/database";
+import { getDatabase, ref as rtRef, set, push } from "firebase/database";
 
 const PostList = (props) => {
   const navigate = useNavigate()
@@ -14,24 +14,29 @@ const PostList = (props) => {
 
   React.useEffect( () => {
     dispatch(loadPostFB());
+    console.log('포스트 로딩!')
       }, []);
       
 
   const likePost = (post_index) => {
     try {
     const newLike = [posts[post_index].id, userData.user_id]
-    const alertDate = new Date().getTime()
+    const alertDate = new Date()
 
     if (! posts[post_index].likedBy.includes(userData?.user_id)) {
       dispatch(addLikeFB(newLike))
 
       const alertData = {
-        date: alertDate, 
+        date: alertDate.toLocaleDateString()+' '+ alertDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), 
         post_id: posts[post_index].id,
         committed_by : userData.nickname,
+        alert_type: 'like'
       }
   
-      set(ref(alertdb, 'users/'+posts[post_index].posted_uid+'/like/'+userData.uid), alertData)
+      const alertListRef = rtRef(alertdb, 'users/'+userData.uid+'/alerts')
+      const newAlertRef = push(alertListRef)
+
+      set(newAlertRef, alertData)
 
     }
     else {
