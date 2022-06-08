@@ -1,10 +1,15 @@
 import React, { useState } from "react";
-import styled from 'styled-components'
 import { Route, Routes, useNavigate } from 'react-router-dom'
+
+import {useDispatch} from 'react-redux'
+import {loadPostFB} from './redux/modules/Magazine'
+
 import { auth, db } from './firebase'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { collection, getDocs, query, where } from 'firebase/firestore'
 import { getDatabase, onValue, ref } from "firebase/database";
+
+import styled from 'styled-components'
 import { MdHome } from 'react-icons/md';
 
 import SignUp from "./SignUp";
@@ -16,7 +21,8 @@ import Detail from "./Detail";
 
 
 function App() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const alertdb = getDatabase();
   const [isLogin, setIsLogin] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -25,9 +31,12 @@ function App() {
   const alertCounter = Object.keys(alertData).length
 
   React.useEffect(() => { 
+    dispatch(loadPostFB());
+    console.log('포스트 로드')
     onAuthStateChanged(auth, loginChecker)
     console.log('로그인체킹!')
   }, [])
+  
 
   const alerts_ref = ref(alertdb, 'users/'+ userData?.uid+'/alerts');
   onValue(alerts_ref, (snapshot) => {

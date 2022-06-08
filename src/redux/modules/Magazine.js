@@ -24,6 +24,7 @@ export const createPostFB = createAsyncThunk(
   async (postData) => {
     const docRef = await addDoc(collection(db, 'magazinePost'), postData)
     const newPost = {id: docRef.id, ...postData}
+    console.log(newPost)
     return newPost;
   }
 );
@@ -75,7 +76,20 @@ export const unLikeFB = createAsyncThunk(
 
 const Magazine = createSlice({
   name: 'magazinePost',
-  initialState: {list:[]},
+  initialState: {list:[
+    // {
+    //   id: "",
+    //   layout: "",
+    //   likedBy: [""],
+    //   nickname: "",
+    //   postDate: "",
+    //   postImg: "",
+    //   postTxt: "",
+    //   postedBy: "",
+    //   posted_uid: "",
+    //   profileImg: "",
+    // }
+  ]},
   reducers : {},
   extraReducers: {
     [loadPostFB.fulfilled] : (state, { payload }) => {
@@ -83,7 +97,7 @@ const Magazine = createSlice({
     },
 
     [createPostFB.fulfilled] : (state, { payload }) => {
-      state.list = state.list.push(payload)
+      state.list = [...state.list, payload]
     },
 
     [editPostFB.fulfilled] :  (state, { payload }) => {

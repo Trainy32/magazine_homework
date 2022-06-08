@@ -2,7 +2,7 @@ import React from "react";
 import styled from 'styled-components'
 import {useNavigate} from 'react-router-dom'
 import {useSelector, useDispatch} from 'react-redux'
-import {loadPostFB, addLikeFB, unLikeFB} from './redux/modules/Magazine'
+import { addLikeFB, unLikeFB} from './redux/modules/Magazine'
 import { getDatabase, ref as rtRef, set, push } from "firebase/database";
 
 const PostList = (props) => {
@@ -11,12 +11,6 @@ const PostList = (props) => {
   const alertdb = getDatabase()
   const posts = useSelector(state => state.magazinePost.list)
   const userData = props.userData
-
-  React.useEffect( () => {
-    dispatch(loadPostFB());
-    console.log('포스트 로딩!')
-      }, []);
-      
 
   const likePost = (post_index) => {
     try {

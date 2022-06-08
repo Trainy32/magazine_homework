@@ -23,6 +23,7 @@ const MyAlert = (props) => {
 
     const alert_ref = rtRef(alertdb, 'users/'+userData.uid+'/alerts/'+alertKey)
     remove(alert_ref)
+    window.location.reload()
   }
 
   const deleteAllAlert = (i) => {

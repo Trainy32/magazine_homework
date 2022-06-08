@@ -1,7 +1,7 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit'
 
 import { db } from '../../firebase'
-import {collection, getDoc, getDocs, addDoc, doc, deleteDoc} from 'firebase/firestore'
+import {collection, getDocs, addDoc, doc, deleteDoc} from 'firebase/firestore'
 
 
 export const addCommentFB = createAsyncThunk(
@@ -42,7 +42,7 @@ const Comments = createSlice({
   reducers : {},
   extraReducers: {
     [addCommentFB.fulfilled] : (state, { payload }) => {
-      state.list = state.list.push(payload)
+      state.list = [...state.list, payload]
     },
     [loadCommentFB.fulfilled] : (state, { payload }) => {
       state.list = payload

@@ -10,11 +10,13 @@ import { getDatabase, ref as rtRef, set, push } from "firebase/database";
 const Detail = (props) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const params = useParams()
   const alertdb = getDatabase()
   const userData = props.userData
   const commentList = useSelector(state => state.Comments.list)
-  const params = useParams()
   const currentPost = useSelector((state) => state.magazinePost.list).find((p) => p.id === params.postId)
+
+  console.log(currentPost)
 
   React.useEffect( () => {
     dispatch(loadCommentFB(currentPost.id));
@@ -129,7 +131,7 @@ const Detail = (props) => {
         </PostContent>
 
         <PostResponses>
-          <span>likes<span style={{ margin: '0px 5px 0px 10px', color: '#cd332b', fontSize: '1.1em' }}>{currentPost?.likedBy.length}</span>개</span>
+          <span>likes<span style={{ margin: '0px 5px 0px 10px', color: '#cd332b', fontSize: '1.1em' }}>{currentPost.likedBy? currentPost.likedBy.length : 0}</span>개</span>
           <HeartBtn post_data={currentPost} onClick={() => likePost()}>
             {currentPost.likedBy.includes(userData?.user_id) ? '❤️' : '🤍'}
           </HeartBtn>
