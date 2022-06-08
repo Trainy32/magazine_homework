@@ -4,8 +4,8 @@ import { db } from '../../firebase'
 import {collection, getDoc, getDocs, addDoc, updateDoc, doc, deleteDoc} from 'firebase/firestore'
 
 
-export const loadPostFB = createAsyncThunk(
-  'loadPost',
+export const loadPostsFB = createAsyncThunk(
+  'loadPosts',
   async () => {
     const postListsFB = await getDocs(collection(db, 'magazinePost'))
 
@@ -16,6 +16,16 @@ export const loadPostFB = createAsyncThunk(
     })
 
     return myPostList;
+  }
+);
+
+export const loadOnePostFB = createAsyncThunk(
+  'loadOnePost',
+  async (post_id) => {
+    const doc_ref = doc(collection(db, 'magazinePost'), post_id)
+    const post_data = await getDoc(doc_ref)
+
+    return post_data.data();
   }
 );
 
@@ -77,23 +87,29 @@ export const unLikeFB = createAsyncThunk(
 const Magazine = createSlice({
   name: 'magazinePost',
   initialState: {list:[
-    // {
-    //   id: "",
-    //   layout: "",
-    //   likedBy: [""],
-    //   nickname: "",
-    //   postDate: "",
-    //   postImg: "",
-    //   postTxt: "",
-    //   postedBy: "",
-    //   posted_uid: "",
-    //   profileImg: "",
-    // }
-  ]},
+  ],
+  selected :     {
+    id: "",
+    layout: "",
+    likedBy: [""],
+    nickname: "",
+    postDate: "",
+    postImg: "",
+    postTxt: "",
+    postedBy: "",
+    posted_uid: "",
+    profileImg: "",
+  }
+  },
   reducers : {},
+
   extraReducers: {
-    [loadPostFB.fulfilled] : (state, { payload }) => {
+    [loadPostsFB.fulfilled] : (state, { payload }) => {
       state.list = payload
+    },
+
+    [loadOnePostFB.fulfilled] : (state, { payload }) => {
+      state.selected = payload
     },
 
     [createPostFB.fulfilled] : (state, { payload }) => {

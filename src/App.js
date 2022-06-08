@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Route, Routes, useNavigate } from 'react-router-dom'
 
 import {useDispatch} from 'react-redux'
-import {loadPostFB} from './redux/modules/Magazine'
+import {loadPostsFB} from './redux/modules/Magazine'
 
 import { auth, db } from './firebase'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
@@ -31,7 +31,7 @@ function App() {
   const alertCounter = Object.keys(alertData).length
 
   React.useEffect(() => { 
-    dispatch(loadPostFB());
+    dispatch(loadPostsFB());
     console.log('포스트 로드')
     onAuthStateChanged(auth, loginChecker)
     console.log('로그인체킹!')

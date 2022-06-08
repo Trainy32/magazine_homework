@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
-import { createPostFB, editPostFB, deletePostFB } from './redux/modules/Magazine'
+import { createPostFB, loadOnePostFB, editPostFB, deletePostFB } from './redux/modules/Magazine'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { storage } from './firebase'
 
@@ -11,6 +11,12 @@ const Write = (props) => {
   const dispatch = useDispatch();
   const params = useParams()
   const currentPost = useSelector((state) => state.magazinePost.list).find((p) => p.id === params.postId)
+
+  React.useEffect( () => {
+    if (params.postId !== 'new') {
+      dispatch(loadOnePostFB(params.postId))
+    }
+      }, []);
 
   const [layout, setLayout] = useState('Top')
   const [imageUrl, setImageUrl] = useState('')

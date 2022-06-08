@@ -20,10 +20,8 @@ const MyAlert = (props) => {
 
   const deleteAlert = (i) => {
     const alertKey = Object.keys(alertData)[i]
-
     const alert_ref = rtRef(alertdb, 'users/'+userData.uid+'/alerts/'+alertKey)
     remove(alert_ref)
-    window.location.reload()
   }
 
   const deleteAllAlert = (i) => {
@@ -121,8 +119,9 @@ const Thumbnails = styled.div`
   width: 110px;
   margin: 10px 30px 10px 10px;
   border-radius: 5px;
-  background: url(${(props) => props.posts? (props.posts.find((p) => p.id === props.post_id).postImg) : ''});
+  background: url(${(props) => props.posts && (props.posts.find((p) => p.id === props.post_id)) ? (props.posts.find((p) => p.id === props.post_id).postImg) : ''});
   background-size: cover;
+  background-color:#ddd;
   cursor:pointer;
 `
 

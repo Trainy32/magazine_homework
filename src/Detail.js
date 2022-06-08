@@ -2,7 +2,7 @@ import React from "react";
 import styled from 'styled-components'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { addLikeFB, unLikeFB } from './redux/modules/Magazine'
+import { loadOnePostFB, addLikeFB, unLikeFB } from './redux/modules/Magazine'
 import { addCommentFB, loadCommentFB, deleteCommentFB } from "./redux/modules/Comments";
 import { getDatabase, ref as rtRef, set, push } from "firebase/database";
 
@@ -14,15 +14,15 @@ const Detail = (props) => {
   const alertdb = getDatabase()
   const userData = props.userData
   const commentList = useSelector(state => state.Comments.list)
-  const currentPost = useSelector((state) => state.magazinePost.list).find((p) => p.id === params.postId)
-
-  console.log(currentPost)
+  const currentPost = useSelector((state) => state.magazinePost.selected)
 
   React.useEffect( () => {
-    dispatch(loadCommentFB(currentPost.id));
+    dispatch(loadOnePostFB(params.postId))
+    dispatch(loadCommentFB(params.postId));
       }, []);
   
   const comment_ref = React.useRef()
+  
   const addComment = () => {
     if (userData) {
       const commentDate = new Date()
@@ -131,7 +131,8 @@ const Detail = (props) => {
         </PostContent>
 
         <PostResponses>
-          <span>likes<span style={{ margin: '0px 5px 0px 10px', color: '#cd332b', fontSize: '1.1em' }}>{currentPost.likedBy? currentPost.likedBy.length : 0}</span>개</span>
+          <span>likes<span style={{ margin: '0px 5px 0px 10px', color: '#cd332b', fontSize: '1.1em' }}>
+            {currentPost.likedBy ? currentPost.likedBy.length : 0}</span>개</span>
           <HeartBtn post_data={currentPost} onClick={() => likePost()}>
             {currentPost.likedBy.includes(userData?.user_id) ? '❤️' : '🤍'}
           </HeartBtn>
