@@ -15,19 +15,20 @@ const Detail = (props) => {
   const alertdb = getDatabase()
   const userData = props.userData
   const commentList = useSelector(state => state.Comments.list)
-  const currentPost = useSelector((state) => state.magazinePost.selected)
-  const [ isLiked, setIsLiked ] = React.useState(null)
+  const [ isLiked, setIsLiked ] = React.useState(false)
   const [ heartOn, setHeartOn ] = React.useState(false)
 
   React.useEffect( () => {
     dispatch(loadOnePostFB(params.postId))
-    dispatch(loadCommentFB(params.postId));
+    dispatch(loadCommentFB(params.postId))
     setIsLiked(userData ? currentPost.likedBy.includes(userData.user_id) : null)
-      }, [userData]);
+    console.log(isLiked)
+      }, [userData, params.postId]);
   
+      
+  const currentPost = useSelector(state => state.magazinePost.selected)
   const comment_ref = React.useRef()
-
-
+ 
 
   const addComment = () => {
     if (userData) {
@@ -68,7 +69,7 @@ const Detail = (props) => {
 
       if (!isLiked) {
         dispatch(addLikeFB(newLike))
-
+        console.log(currentPost.id)
         const alertData = {
           date: alertDate.toLocaleDateString()+' '+ alertDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           post_id: currentPost.id,
@@ -110,6 +111,7 @@ const Detail = (props) => {
       if(window.confirm('코멘트를 삭제하시겠어요?')) {
         dispatch(deleteCommentFB(commentData.id))
         window.alert('삭제되었습니다')
+        dispatch(loadCommentFB(params.postId))
       }
     } else {
       window.alert('코멘트 작성자만 삭제할 수 있어요')

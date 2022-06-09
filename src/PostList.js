@@ -60,7 +60,6 @@ const PostList = (props) => {
     }
   }
 
-
   return (
     <Wrap>
       { posts.length ? posts.map((p,i) => {return(

@@ -38,8 +38,6 @@ function App() {
     onAuthStateChanged(auth, loginChecker)
     console.log('로그인체킹!')
   }, [])
-  
-  console.log(is_loaded)
 
   const alerts_ref = ref(alertdb, 'users/'+ userData?.uid+'/alerts');
   onValue(alerts_ref, (snapshot) => {

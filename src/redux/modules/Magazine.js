@@ -111,11 +111,14 @@ const Magazine = createSlice({
       state.is_loaded = true
     },
 
-    [loadOnePostFB.pending] : (state, { payload }) => {
+    [loadOnePostFB.pending] : (state) => {
+      console.log('pending')
+      state.selected = {}
       state.is_loaded = false
     },
 
     [loadOnePostFB.fulfilled] : (state, { payload }) => {
+      console.log('fulfilled')
       state.selected = payload
       state.is_loaded = true
     },
