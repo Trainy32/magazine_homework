@@ -4,6 +4,7 @@ import {useNavigate} from 'react-router-dom'
 import {useSelector, useDispatch} from 'react-redux'
 import { addLikeFB, unLikeFB} from './redux/modules/Magazine'
 import { getDatabase, ref as rtRef, set, push } from "firebase/database";
+import HeartAni from './HeartAni'
 
 const PostList = (props) => {
   const navigate = useNavigate()
@@ -11,6 +12,7 @@ const PostList = (props) => {
   const alertdb = getDatabase()
   const posts = useSelector(state => state.magazinePost.list)
   const userData = props.userData
+  const [ heartOn, setHeartOn ] = React.useState(false)
 
   const likePost = (post_index) => {
     try {
@@ -31,10 +33,12 @@ const PostList = (props) => {
       const newAlertRef = push(alertListRef)
 
       set(newAlertRef, alertData)
+      setHeartOn(!heartOn)
 
     }
     else {
       dispatch(unLikeFB(newLike))
+      setHeartOn(false)
     }
     } catch(err) {
       if(!userData) {
@@ -80,6 +84,7 @@ const PostList = (props) => {
         <span>likes<span style={{margin:'0px 5px 0px 10px', color:'#cd332b', fontSize:'1.1em'}}>{posts[i].likedBy.length}</span>개</span>
         <HeartBtn post_data={posts[i]} onClick={() => likePost(i)}> 
           { posts[i].likedBy.includes(userData?.user_id) ? '❤️' : '🤍'} 
+          {heartOn ? <HeartAni/> : null}
         </HeartBtn>
       </PostResponses>
     </Card>
@@ -100,6 +105,7 @@ const Card = styled.div`
   border: 1px solid #ccc;
   border-radius: 5px;
   box-shadow: 1px 1px 1px #0d0d0d21;
+  position: relative;
 
   &:hover {
     box-shadow: 3px 3px 5px #0d0d0d38;
@@ -152,7 +158,6 @@ const PostContent = styled.div`
   display:flex;
   flex-direction: ${(props) => (props.post_data.layout === 'Top' ? 'column' : props.post_data.layout === 'Left' ? 'row' : 'row-reverse')};
   flex-wrap: nowrap;
-  position: relative;
   cursor:pointer;
 `
 

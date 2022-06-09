@@ -16,14 +16,19 @@ const Detail = (props) => {
   const userData = props.userData
   const commentList = useSelector(state => state.Comments.list)
   const currentPost = useSelector((state) => state.magazinePost.selected)
+  const [ isLiked, setIsLiked ] = React.useState(null)
+  const [ heartOn, setHeartOn ] = React.useState(false)
 
   React.useEffect( () => {
     dispatch(loadOnePostFB(params.postId))
     dispatch(loadCommentFB(params.postId));
-      }, []);
+    setIsLiked(userData ? currentPost.likedBy.includes(userData.user_id) : null)
+      }, [userData]);
   
   const comment_ref = React.useRef()
-  
+
+
+
   const addComment = () => {
     if (userData) {
       const commentDate = new Date()
@@ -61,7 +66,7 @@ const Detail = (props) => {
       const newLike = [currentPost.id, userData.user_id]
       const alertDate = new Date()
 
-      if (!currentPost.likedBy.includes(userData?.user_id)) {
+      if (!isLiked) {
         dispatch(addLikeFB(newLike))
 
         const alertData = {
@@ -75,10 +80,13 @@ const Detail = (props) => {
         const newAlertRef = push(alertListRef)
   
         set(newAlertRef, alertData)
-  
+        setIsLiked(true)
+        setHeartOn(!heartOn)
       }
       else {
         dispatch(unLikeFB(newLike))
+        setIsLiked(false)
+        setHeartOn(false)
       }
     } catch (err) {
       if (!userData) {
@@ -134,9 +142,9 @@ const Detail = (props) => {
         <PostResponses>
           <span>likes<span style={{ margin: '0px 5px 0px 10px', color: '#cd332b', fontSize: '1.1em' }}>
             {currentPost.likedBy ? currentPost.likedBy.length : 0}</span>개</span>
-          <HeartBtn post_data={currentPost} onClick={() => likePost()}>
-            {currentPost.likedBy.includes(userData?.user_id) ? '❤️' : '🤍'}
-            {/* <HeartAni/> */}
+          <HeartBtn onClick={() => likePost()}>
+            {isLiked ? '❤️' : '🤍'}
+            {heartOn ? <HeartAni/> : null}
           </HeartBtn>
         </PostResponses>
       </Card>
