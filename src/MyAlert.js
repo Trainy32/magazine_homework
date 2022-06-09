@@ -47,6 +47,7 @@ const MyAlert = (props) => {
         <DeleteBtn><RiDeleteBinLine onClick={() => deleteAlert(i)}/></DeleteBtn>
       </Alerts>
       )})}
+      {Object.values(alertData).length === 0 ?  <NoAlerts> 지금은 알림이 없어요!</NoAlerts>: null}
     </Wrap>
   )
 }
@@ -131,6 +132,11 @@ const DeleteBtn = styled.span`
   color: #aaa;
   cursor:pointer;
 `
-
+const NoAlerts = styled.h2`
+  font-size: 4vmax;
+  margin: 120px auto 0px auto;
+  padding-right: 1vmax;
+  color: #aaa;
+`
 
 export default MyAlert

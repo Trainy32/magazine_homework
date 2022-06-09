@@ -27,10 +27,16 @@ const SignUp = (props) => {
 
   const signupBtn = async (event) => {
     event.preventDefault()
-    const pwConfirmed = pw_ref.current.value === pw_check_ref.current.value
-    const idFormConfirmed = Boolean((id_ref.current.value).split('@')[1].split('.')[1])
+    const pwConfirmed = pw_ref.current.value.length > 5 && pw_ref.current.value === pw_check_ref.current.value
+    const nicknameConfirmed = nickname_ref.current.value.length > 0
+    let idFormConfirmed = false
 
-    if (pwConfirmed && idFormConfirmed) {
+    if (id_ref.current.value !== '') {
+      idFormConfirmed = Boolean((id_ref.current.value).split('@')[1]?.split('.')[1])
+    }
+
+
+    if (pwConfirmed && idFormConfirmed && nicknameConfirmed) {
       try {
         const user = await createUserWithEmailAndPassword(auth, id_ref.current.value, pw_check_ref.current.value)
 
@@ -44,13 +50,17 @@ const SignUp = (props) => {
 
         window.alert(`환영합니다! ${ nickname_ref.current.value}님!\n회원가입이 완료되었습니다.`)
         navigate('/')
-      } catch {
-        window.alert('중복된 아이디입니다.')
+      } catch(err) {
+        window.alert('아이디를 확인해주세요!')
+        console.log(err)
       }
     } else if (!idFormConfirmed) {
       window.alert('아이디를 정확히 입력해주세요')
+    } else if (!nicknameConfirmed) {
+      window.alert('닉네임을 입력해주세요')
     } else if (!pwConfirmed) {
-      window.alert('비밀번호 확인이 일치하지 않습니다.')
+      console.log(pw_ref.current.value.length)
+      window.alert(pw_ref.current.value.length < 6 ? '비밀번호 확인이 일치하지 않습니다.' : '6자리 이상의 비밀번호를 입력해주세요')
     }
 
   }

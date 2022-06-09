@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Route, Routes, useNavigate } from 'react-router-dom'
 
 import {useDispatch, useSelector} from 'react-redux'
-import {loadPostsFB, loadOnePostFB} from './redux/modules/Magazine'
+import {loadPostsFB} from './redux/modules/Magazine'
 
 import { auth, db } from './firebase'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
