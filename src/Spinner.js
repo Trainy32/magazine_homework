@@ -45,7 +45,7 @@ background-color: #1c617af0;
 
 #hourglass{
 font-size: 6em;
-animation: ${SpinnerAnimation} 2.5s 1s linear infinite ; 
+animation: ${SpinnerAnimation} 2.5s linear infinite ; 
 }
 
 p {

@@ -23,7 +23,6 @@ const Login = (props) => {
   return (
     <LoginBox>
       <h1> LOGIN </h1>
-      <h3>test@test.com</h3>
       <span>아이디</span><input ref={id_ref} type='email' placeholder='아이디를 입력해주세요'/>
       <span>비밀번호</span><input ref={pw_ref} type='password' placeholder='비밀번호를 입력해주세요'/>
       <LoginBtn onClick={userLogin}> 로그인 </LoginBtn>

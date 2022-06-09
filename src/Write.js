@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
-import { createPostFB, loadOnePostFB, editPostFB, deletePostFB } from './redux/modules/Magazine'
+import { createPostFB, loadPostsFB, loadOnePostFB, editPostFB, deletePostFB } from './redux/modules/Magazine'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { storage } from './firebase'
 
@@ -18,7 +18,7 @@ const Write = (props) => {
     }
       }, []);
 
-  const [layout, setLayout] = useState('Top')
+  const [layout, setLayout] = useState(params.postId === 'new' ? 'Top' : currentPost.layout)
   const [imageUrl, setImageUrl] = useState('')
 
   const text_ref = useRef(null);
@@ -76,6 +76,8 @@ const Write = (props) => {
       }
       dispatch(editPostFB(newPostData))
       window.alert('게시글이 수정 되었습니다!')
+      
+      dispatch(loadPostsFB());
       navigate('/')
     } else if (text_ref.current.value === '') {
       window.alert('텍스트를 입력해주세요!')
@@ -87,8 +89,9 @@ const Write = (props) => {
   const deletePost = () => {
     if(window.confirm('정말 삭제하시겠습니까?')) {
       dispatch(deletePostFB(currentPost.id))
+      dispatch(loadPostsFB());
       window.alert('삭제되었습니다')
-      navigate('/')
+      navigate('/', {replace:true})
     }
   }
 

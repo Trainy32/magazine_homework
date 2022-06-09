@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Route, Routes, useNavigate } from 'react-router-dom'
 
 import {useDispatch, useSelector} from 'react-redux'
-import {loadPostsFB} from './redux/modules/Magazine'
+import {loadPostsFB, loadOnePostFB} from './redux/modules/Magazine'
 
 import { auth, db } from './firebase'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
@@ -29,7 +29,8 @@ function App() {
   const [isLogin, setIsLogin] = useState(false);
   const [userData, setUserData] = useState(null);
   const [alertData, setAlertData] = useState({});
-  
+  const posts = useSelector(state => state.magazinePost.list)
+  const postCounter = posts.length
   const alertCounter = Object.keys(alertData).length
 
   React.useEffect(() => { 
@@ -37,7 +38,7 @@ function App() {
     console.log('포스트 로드')
     onAuthStateChanged(auth, loginChecker)
     console.log('로그인체킹!')
-  }, [])
+  }, [postCounter])
 
   const alerts_ref = ref(alertdb, 'users/'+ userData?.uid+'/alerts');
   onValue(alerts_ref, (snapshot) => {

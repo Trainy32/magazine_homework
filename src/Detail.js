@@ -1,7 +1,7 @@
 import React from "react";
 import styled from 'styled-components'
-import { useNavigate, useParams } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
+import { useNavigate, useParams, useLocation } from 'react-router-dom'
+import { useSelector, useDispatch} from 'react-redux'
 import { loadOnePostFB, addLikeFB, unLikeFB } from './redux/modules/Magazine'
 import { addCommentFB, loadCommentFB, deleteCommentFB } from "./redux/modules/Comments";
 import { getDatabase, ref as rtRef, set, push } from "firebase/database";
@@ -15,8 +15,10 @@ const Detail = (props) => {
   const alertdb = getDatabase()
   const userData = props.userData
   const commentList = useSelector(state => state.Comments.list)
+  const is_loaded = useSelector(state => state.magazinePost.is_loaded )
   const [ isLiked, setIsLiked ] = React.useState(false)
   const [ heartOn, setHeartOn ] = React.useState(false)
+
 
   React.useEffect( () => {
     dispatch(loadOnePostFB(params.postId))
@@ -25,10 +27,9 @@ const Detail = (props) => {
     likeChecker()
     console.log(isLiked)
       }, [userData, params.postId]);
-  
-  
+
   const likeChecker = () => {
-    if(userData) {
+    if(userData && is_loaded) {
     setIsLiked(currentPost.likedBy.includes(userData.user_id))
     }
   }
