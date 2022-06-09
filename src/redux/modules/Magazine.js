@@ -86,30 +86,38 @@ export const unLikeFB = createAsyncThunk(
 
 const Magazine = createSlice({
   name: 'magazinePost',
-  initialState: {list:[
-  ],
-  selected :     {
-    id: "",
-    layout: "",
-    likedBy: [""],
-    nickname: "",
-    postDate: "",
-    postImg: "",
-    postTxt: "",
-    postedBy: "",
-    posted_uid: "",
-    profileImg: "",
-  }
+  initialState: {
+    is_loaded: false,
+    paging: { start: null, next: null, size: 3 },
+    list:[],
+    selected : {
+      id: "",
+      layout: "",
+      likedBy: [""],
+      nickname: "",
+      postDate: "",
+      postImg: "",
+      postTxt: "",
+      postedBy: "",
+      posted_uid: "",
+      profileImg: "",
+    }
   },
   reducers : {},
 
   extraReducers: {
     [loadPostsFB.fulfilled] : (state, { payload }) => {
       state.list = payload
+      state.is_loaded = true
+    },
+
+    [loadOnePostFB.pending] : (state, { payload }) => {
+      state.is_loaded = false
     },
 
     [loadOnePostFB.fulfilled] : (state, { payload }) => {
       state.selected = payload
+      state.is_loaded = true
     },
 
     [createPostFB.fulfilled] : (state, { payload }) => {

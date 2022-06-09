@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Route, Routes, useNavigate } from 'react-router-dom'
 
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import {loadPostsFB} from './redux/modules/Magazine'
 
 import { auth, db } from './firebase'
@@ -18,11 +18,13 @@ import MyAlert from "./MyAlert";
 import PostList from "./PostList";
 import Write from "./Write";
 import Detail from "./Detail";
+import Spinner from './Spinner'
 
 
 function App() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const is_loaded = useSelector(state => state.magazinePost.is_loaded )
   const alertdb = getDatabase();
   const [isLogin, setIsLogin] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -37,6 +39,7 @@ function App() {
     console.log('로그인체킹!')
   }, [])
   
+  console.log(is_loaded)
 
   const alerts_ref = ref(alertdb, 'users/'+ userData?.uid+'/alerts');
   onValue(alerts_ref, (snapshot) => {
@@ -75,6 +78,7 @@ function App() {
 
   return (
     <div className="App">
+      {!is_loaded ? <Spinner/> : null }
       <Header>
         <Welcome>
           <div user_data={userData} onClick={() => navigate('/')}> <MdHome/></div>
