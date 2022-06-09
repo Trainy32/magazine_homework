@@ -29,10 +29,13 @@ const PostList = (props) => {
         alert_type: 'like'
       }
   
-      const alertListRef = rtRef(alertdb, 'users/'+userData.uid+'/alerts')
-      const newAlertRef = push(alertListRef)
+      if (posts[post_index].postedBy !== userData.user_id) {
+        const alertListRef = rtRef(alertdb, 'users/'+posts[post_index].posted_uid+'/alerts')
+        const newAlertRef = push(alertListRef)
+  
+        set(newAlertRef, alertData)
+          }
 
-      set(newAlertRef, alertData)
       setHeartOn(!heartOn)
 
     }

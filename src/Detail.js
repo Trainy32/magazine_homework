@@ -21,20 +21,30 @@ const Detail = (props) => {
   React.useEffect( () => {
     dispatch(loadOnePostFB(params.postId))
     dispatch(loadCommentFB(params.postId))
-    setIsLiked(userData ? currentPost.likedBy.includes(userData.user_id) : null)
+    
+    likeChecker()
     console.log(isLiked)
       }, [userData, params.postId]);
   
+  
+  const likeChecker = () => {
+    if(userData) {
+    setIsLiked(currentPost.likedBy.includes(userData.user_id))
+    }
+  }
+
+  const showHeart = () => {
+    return isLiked ? '❤️' : '🤍'
+  }
       
   const currentPost = useSelector(state => state.magazinePost.selected)
   const comment_ref = React.useRef()
- 
 
   const addComment = () => {
     if (userData) {
       const commentDate = new Date()
       const newComment = {
-        post_id : currentPost.id,
+        post_id : params.postId,
         comment : comment_ref.current.value,
         comment_by: userData.user_id,
         comment_nick : userData.nickname,
@@ -44,16 +54,17 @@ const Detail = (props) => {
 
       const alertData = {
         date: commentDate.toLocaleDateString()+' '+ commentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        post_id: currentPost.id,
+        post_id: params.postId,
         committed_by : userData.nickname,
         alert_type: 'comment'
       }
-  
-      const alertListRef = rtRef(alertdb, 'users/'+userData.uid+'/alerts')
+      
+      if (currentPost.postedBy !== userData.user_id) {
+      const alertListRef = rtRef(alertdb, 'users/'+currentPost.posted_uid+'/alerts')
       const newAlertRef = push(alertListRef)
 
       set(newAlertRef, alertData)
-
+        }
 
       window.alert('등록되었습니다')
     } else {
@@ -64,23 +75,26 @@ const Detail = (props) => {
 
   const likePost = () => {
     try {
-      const newLike = [currentPost.id, userData.user_id]
+      const newLike = [params.postId, userData.user_id]
       const alertDate = new Date()
 
       if (!isLiked) {
         dispatch(addLikeFB(newLike))
-        console.log(currentPost.id)
         const alertData = {
           date: alertDate.toLocaleDateString()+' '+ alertDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          post_id: currentPost.id,
+          post_id: params.postId,
           committed_by : userData.nickname,
           alert_type: 'like'
         }
+
+        if (currentPost.postedBy !== userData.user_id) {
+          console.log('알럿띄울거야!')
+          const alertListRef = rtRef(alertdb, 'users/'+currentPost.posted_uid+'/alerts')
+          const newAlertRef = push(alertListRef)
     
-        const alertListRef = rtRef(alertdb, 'users/'+userData.uid+'/alerts')
-        const newAlertRef = push(alertListRef)
-  
-        set(newAlertRef, alertData)
+          set(newAlertRef, alertData)
+            }
+    
         setIsLiked(true)
         setHeartOn(!heartOn)
       }
@@ -145,7 +159,7 @@ const Detail = (props) => {
           <span>likes<span style={{ margin: '0px 5px 0px 10px', color: '#cd332b', fontSize: '1.1em' }}>
             {currentPost.likedBy ? currentPost.likedBy.length : 0}</span>개</span>
           <HeartBtn onClick={() => likePost()}>
-            {isLiked ? '❤️' : '🤍'}
+           {showHeart()}
             {heartOn ? <HeartAni/> : null}
           </HeartBtn>
         </PostResponses>
